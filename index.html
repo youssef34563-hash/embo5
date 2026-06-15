@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>EMBO Loading</title>
+
+<style>
+
+body{
+    margin:0;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#0f1115;
+    font-family:Poppins, sans-serif;
+    overflow:hidden;
+}
+
+/* 🔴 Background Glow */
+.glow1,.glow2{
+    position:absolute;
+    border-radius:50%;
+    filter:blur(80px);
+}
+
+.glow1{
+    width:300px;
+    height:300px;
+    background:#ff3b30;
+    top:-100px;
+    left:-100px;
+}
+
+.glow2{
+    width:300px;
+    height:300px;
+    background:#b71c1c;
+    bottom:-100px;
+    right:-100px;
+}
+
+/* 🚑 CENTER CIRCLE */
+.loader{
+    position:relative;
+    width:180px;
+    height:180px;
+    border-radius:50%;
+    border:4px solid rgba(255,59,48,0.2);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    animation:rotate 2s linear infinite;
+}
+
+/* spinning ring */
+.loader::before{
+    content:"";
+    position:absolute;
+    width:100%;
+    height:100%;
+    border-radius:50%;
+    border-top:4px solid #ff3b30;
+    animation:spin 1s linear infinite;
+}
+
+/* 🚑 ambulance */
+.ambulance{
+    font-size:60px;
+    animation:float 1.2s ease-in-out infinite;
+    z-index:2;
+}
+
+/* animations */
+@keyframes spin{
+    0%{transform:rotate(0);}
+    100%{transform:rotate(360deg);}
+}
+
+@keyframes rotate{
+    0%{transform:rotate(0);}
+    100%{transform:rotate(-360deg);}
+}
+
+@keyframes float{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-10px);}
+}
+
+/* text */
+h2{
+    position:absolute;
+    bottom:80px;
+    color:white;
+    font-size:18px;
+    opacity:0.8;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="glow1"></div>
+<div class="glow2"></div>
+
+<div class="loader">
+    <div class="ambulance">🚑</div>
+</div>
+
+<h2>EMBO is starting...</h2>
+
+<script>
+setTimeout(()=>{
+    window.location.href = "login.html";
+}, 3000);
+</script>
+
+</body>
+</html>

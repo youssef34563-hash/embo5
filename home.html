@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>EMBO - Home</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- ===== SIDEBAR ===== -->
+    <div class="sidebar">
+        <h2>🚑 EMBO</h2>
+
+        <a href="home.html" class="active">Home</a>
+        <a href="request.html">Request</a>
+        <a href="contacts.html">Contacts</a>
+        <a href="profile.html">Profile</a>
+        <a href="settings.html">Settings</a>
+    </div>
+
+    <!-- ===== MAIN ===== -->
+    <div class="main">
+
+        <!-- Welcome Card -->
+        <div class="card">
+            <h2>👋 Welcome</h2>
+            <p id="user">Loading user...</p>
+        </div>
+
+        <!-- Emergency Quick Actions -->
+        <div class="card">
+            <h3>🚑 Quick Actions</h3>
+
+            <button class="btn" onclick="goRequest()">🚑 Request Ambulance</button>
+            <button class="btn" onclick="goLiveMap()">🚑 Live Map</button>
+            <button class="btn" onclick="goContacts()">📞 Emergency Contacts</button>
+
+        </div>
+
+        <!-- Status Card -->
+        <div class="card">
+            <h3>📊 System Status</h3>
+            <p>All systems are running normally ✔</p>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+    // ===== AUTH CHECK (FIXED) =====
+    let user = localStorage.getItem("embo_user");
+
+    if(localStorage.getItem("embo_logged") !== "true"){
+    window.location.href = "login.html";
+} {
+        document.getElementById("user").innerHTML = "Hello, " + user + " 👋";
+    }
+
+    // ===== NAVIGATION =====
+    function goRequest(){
+        window.location.href = "request.html";
+    }
+
+    function goLiveMap(){
+        window.location.href = "livemap.html";
+    }
+
+    function goContacts(){
+        window.location.href = "contacts.html";
+    }
+
+</script>
+
+</body>
+</html>

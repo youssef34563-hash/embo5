@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>EMBO Smart Map</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <style>
+        #map{
+            height:300px;
+            width:100%;
+            border-radius:14px;
+            margin-top:15px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <div class="sidebar">
+        <h2>🚑 EMBO</h2>
+
+        <a href="home.html">Home</a>
+        <a href="request.html">Request</a>
+        <a href="map.html" class="active">Map</a>
+        <a href="contacts.html">Contacts</a>
+        <a href="profile.html">Profile</a>
+        <a href="settings.html">Settings</a>
+    </div>
+
+    <div class="main">
+
+        <div class="card">
+            <h2>🗺️ Smart Emergency Tracking</h2>
+            <div id="map"></div>
+        </div>
+
+        <div class="card">
+            <h3>📊 Live Status</h3>
+            <p id="status">Starting system...</p>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+ 
+
+var map = L.map('map').setView([30.0444, 31.2357], 13);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution:'&copy; OpenStreetMap'
+}).addTo(map);
+
+let userMarker;
+let hospitalMarker;
+let ambulanceMarker;
+let routeLine;
+
+// ================= SOUND =================
+function beep(){
+    let audio = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg");
+    audio.play();
+}
+
+// ================= DISTANCE =================
+function getDistance(lat1, lon1, lat2, lon2){
+
+    const R = 6371;
+
+    const dLat = (lat2-lat1)*Math.PI/180;
+    const dLon = (lon2-lon1)*Math.PI/180;
+
+    const a =
+        Math.sin(dLat/2)**2 +
+        Math.cos(lat1*Math.PI/180) *
+        Math.cos(lat2*Math.PI/180) *
+        Math.sin(dLon/2)**2;
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+    return R * c;
+}
+
+//////////////////////////////////////////////////////
+// 🔐 REQUEST LOCK
+//////////////////////////////////////////////////////
+
+let requests = JSON.parse(localStorage.getItem("embo_requests")) || [];
+let currentId = localStorage.getItem("embo_current_request");
+
+let req = requests.find(r => String(r.id) === String(currentId));
+
+if(!req){
+    alert("🚫 You must accept a request first");
+    window.location.href = "request.html";
+}
+
+//////////////////////////////////////////////////////
+// ================= START MAP =================
+//////////////////////////////////////////////////////
+
+navigator.geolocation.getCurrentPosition(async function(pos){
+
+    if(!req) return;
+
+    let lat = pos.coords.latitude;
+    let lng = pos.coords.longitude;
+
+    map.setView([lat,lng], 15);
+
+    userMarker = L.marker([lat,lng]).addTo(map)
+        .bindPopup("📍 You")
+        .openPopup();
+
+    let caseType = localStorage.getItem("embo_type") || "Accident";
+
+    let query = `
+    [out:json];
+    node["amenity"="hospital"](around:7000,${lat},${lng});
+    out;
+    `;
+
+    let url = "https://overpass-api.de/api/interpreter?data=" + encodeURIComponent(query);
+
+    let res = await fetch(url);
+    let data = await res.json();
+
+    if(!data.elements.length){
+        document.getElementById("status").innerHTML = "No hospitals found";
+        return;
+    }
+
+    // ================= NEAREST HOSPITAL =================
+    let nearest = null;
+    let minDist = Infinity;
+
+    data.elements.forEach(h => {
+
+        let d = getDistance(lat,lng,h.lat,h.lon);
+
+        if(d < minDist){
+            minDist = d;
+            nearest = h;
+        }
+
+    });
+
+    hospitalMarker = L.marker([nearest.lat,nearest.lon]).addTo(map)
+        .bindPopup("🏥 " + (nearest.tags.name || "Hospital"))
+        .openPopup();
+
+    // ================= ROUTING =================
+    let routeURL =
+        `https://router.project-osrm.org/route/v1/driving/`
+        + `${lng},${lat};${nearest.lon},${nearest.lat}`
+        + `?overview=full&geometries=geojson`;
+
+    let routeRes = await fetch(routeURL);
+    let routeData = await routeRes.json();
+
+    let coords = routeData.routes[0].geometry.coordinates;
+    let routePoints = coords.map(c => [c[1], c[0]]);
+
+    routeLine = L.polyline(routePoints,{
+        color:'red',
+        weight:5
+    }).addTo(map);
+
+    map.fitBounds(routeLine.getBounds());
+
+    let duration = routeData.routes[0].duration;
+    let minutes = Math.round(duration / 60);
+
+    beep();
+    document.getElementById("status").innerHTML =
+    "🚑 Route Ready | ETA: " + minutes + " min";
+
+    alert("🚑 Ambulance dispatched!");
+
+    // ================= AMBULANCE SYSTEM (REAL LOGIC) =================
+
+    let ambulances = [
+        {id:1, lat: lat + 0.02, lng: lng + 0.03},
+        {id:2, lat: lat - 0.03, lng: lng + 0.02},
+        {id:3, lat: lat + 0.04, lng: lng - 0.02}
+    ];
+
+    let nearestAmb = null;
+    let minAmbDist = Infinity;
+
+    ambulances.forEach(a => {
+
+        let d = getDistance(a.lat, a.lng, lat, lng);
+
+        if(d < minAmbDist){
+            minAmbDist = d;
+            nearestAmb = a;
+        }
+
+    });
+
+    // ================= START INDEX (fake realism) =================
+    let startIndex = Math.min(10, routePoints.length - 1);
+
+    ambulanceMarker = L.marker([nearestAmb.lat, nearestAmb.lng]).addTo(map)
+        .bindPopup("🚑 Ambulance #" + nearestAmb.id);
+
+    let i = startIndex;
+
+    ambulanceMarker.setLatLng(routePoints[startIndex]);
+
+    // ================= MOVEMENT =================
+    function move(){
+
+        if(i < routePoints.length){
+
+            ambulanceMarker.setLatLng(routePoints[i]);
+
+            let remaining = Math.round(
+                ((routePoints.length - i) / routePoints.length) * minutes
+            );
+
+            document.getElementById("status").innerHTML =
+            "🚑 Moving... | ETA: " + remaining + " min";
+
+            i++;
+            setTimeout(move, 120);
+
+        } else {
+            beep();
+            alert("🏥 Ambulance Arrived!");
+            document.getElementById("status").innerHTML = "🏥 Arrived";
+        }
+    }
+
+    move();
+
+});
+
+
+</script>
+
+</body>
+</html>

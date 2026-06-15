@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Request Ambulance</title>
+    <link rel="stylesheet" href="style.css">
+
+    <!-- 🔐 حماية (FIXED) -->
+    <script>
+        if(localStorage.getItem("embo_logged") !== "true"){
+            window.location.href = "login.html";
+        }
+    </script>
+</head>
+
+<body>
+
+<div class="app">
+
+    <div class="sidebar">
+        <h2>🚑 EMBO</h2>
+
+        <a href="home.html">Home</a>
+        <a href="request.html" class="active">Request</a>
+        <a href="contacts.html">Contacts</a>
+        <a href="profile.html">Profile</a>
+        <a href="settings.html">Settings</a>
+    </div>
+
+    <div class="main">
+
+        <div class="card">
+            <h2>🚑 Emergency Request</h2>
+            <p>Select case type</p>
+
+            <select id="type">
+             <option value="Accident">🚑 Accident</option>
+             <option value="Heart Attack">❤️ Heart Attack</option>
+             <option value="Fire or Explosion Inccident">🔥 Fire / Explosion Incident</option>
+             <option value="Breathing Issue">🫁 Breathing Issue</option>
+             <option value="Other">⚠️ Other</option>
+            </select>
+
+            <button class="btn" onclick="sendRequest()">
+                🚑 Send Request
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+function sendRequest(){
+
+    let type = document.getElementById("type").value;
+
+    navigator.geolocation.getCurrentPosition((pos)=>{
+
+        let requests = JSON.parse(localStorage.getItem("embo_requests")) || [];
+
+        let newRequest = {
+            id: Date.now(),
+            type: type,
+            time: new Date().toLocaleString(),
+            status: "Searching 🚑",
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude
+        };
+
+        requests.push(newRequest);
+
+        localStorage.setItem("embo_requests", JSON.stringify(requests));
+        localStorage.setItem("embo_current_request", newRequest.id);
+
+        alert("🚑 Request Sent Successfully");
+
+        window.location.href = "map.html";
+
+    }, ()=>{
+
+        alert("GPS permission denied ❌");
+
+    });
+
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,248 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* ================= RESET ================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins', sans-serif;
+    scroll-behavior:smooth;
+}
+
+body{
+    min-height:100vh;
+    background: radial-gradient(circle at center, #121212 0%, #0f1115 100%);
+    color:white;
+    overflow-x:hidden;
+}
+
+/* ================= GLASS BACKGROUND GLOW ================= */
+
+.circle1,.circle2{
+    position:absolute;
+    border-radius:50%;
+    pointer-events:none;
+    z-index:0;
+}
+
+.circle1{
+    width:350px;
+    height:350px;
+    background:radial-gradient(circle, #ff3b30 0%, #b71c1c 60%, transparent 80%);
+    filter:blur(70px);
+    top:-120px;
+    left:-120px;
+    opacity:0.9;
+}
+
+.circle2{
+    width:300px;
+    height:300px;
+    background:radial-gradient(circle, #ff1744 0%, #8e0000 60%, transparent 80%);
+    filter:blur(80px);
+    bottom:-120px;
+    right:-120px;
+    opacity:0.85;
+}
+
+/* ================= APP LAYOUT ================= */
+
+.app{
+    display:grid;
+    grid-template-columns:260px 1fr;
+    min-height:100vh;
+    position:relative;
+    z-index:1;
+}
+
+/* ================= SIDEBAR ================= */
+
+.sidebar{
+    background:rgba(0,0,0,0.35);
+    backdrop-filter:blur(20px);
+    border-right:1px solid rgba(255,255,255,0.08);
+    padding:20px;
+}
+
+.sidebar h2{
+    margin-bottom:20px;
+}
+
+.sidebar a{
+    display:block;
+    color:#ccc;
+    text-decoration:none;
+    padding:10px;
+    margin-bottom:8px;
+    border-radius:10px;
+    transition:0.3s;
+}
+
+.sidebar a:hover{
+    background:rgba(255,59,48,0.15);
+    color:white;
+}
+
+.sidebar a.active{
+    background:#ff3b30;
+    color:white;
+}
+
+/* ================= MAIN ================= */
+
+.main{
+    padding:20px;
+    position:relative;
+    z-index:1;
+}
+
+/* ================= CARD (GLASS STYLE) ================= */
+
+.card{
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.1);
+    backdrop-filter:blur(20px);
+    border-radius:25px;
+    padding:20px;
+    margin-bottom:20px;
+    transition:0.3s;
+    color:white;
+}
+
+.card:hover{
+    transform:translateY(-5px);
+    box-shadow:0 15px 35px rgba(255,59,48,0.2);
+}
+
+/* ================= BUTTON ================= */
+
+button,.btn{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    border:none;
+    border-radius:12px;
+    background:#ff3b30;
+    color:white;
+    cursor:pointer;
+    font-size:15px;
+    transition:0.3s;
+}
+
+button:hover,.btn:hover{
+    transform:translateY(-3px);
+    box-shadow:0 10px 25px rgba(255,59,48,0.4);
+}
+
+button.secondary{
+    background:transparent;
+    border:1px solid rgba(255,255,255,0.2);
+}
+
+button.secondary:hover{
+    background:rgba(255,255,255,0.08);
+}
+
+/* ================= INPUT ================= */
+
+input,select{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    border-radius:12px;
+    border:1px solid rgba(255,255,255,0.1);
+    background:rgba(255,255,255,0.08);
+    color:white;
+    outline:none;
+    transition:0.3s;
+}
+
+input:focus,select:focus{
+    border-color:#ff3b30;
+    box-shadow:0 0 15px rgba(255,59,48,0.4);
+}
+
+/* ================= MAP ================= */
+
+#map{
+    width:100%;
+    height:300px;
+    border-radius:16px;
+    margin-top:15px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.5);
+}
+
+/* ================= TEXT ================= */
+
+p{
+    color:#b0b0b0;
+}
+
+/* ================= STATUS COLORS ================= */
+
+.online{color:#00e676;}
+.warning{color:#ffeb3b;}
+.danger{color:#ff5252;}
+
+/* ================= SCROLLBAR ================= */
+
+::-webkit-scrollbar{
+    width:8px;
+}
+
+::-webkit-scrollbar-track{
+    background:#1b1f2a;
+}
+
+::-webkit-scrollbar-thumb{
+    background:#ff3b30;
+    border-radius:10px;
+}
+
+/* ================= ANIMATION ================= */
+
+.fade{
+    animation:fade 0.6s ease;
+}
+
+@keyframes fade{
+    from{
+        opacity:0;
+        transform:translateY(20px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:768px){
+    .app{
+        grid-template-columns:1fr;
+    }
+
+    .sidebar{
+        display:flex;
+        flex-wrap:wrap;
+        justify-content:center;
+        gap:10px;
+    }
+
+    .sidebar a{
+        margin:5px;
+    }
+}
+
+select{
+    background:rgba(255,255,255,0.08);
+    color:white;
+}
+
+/* 🔥 ده المهم */
+select option{
+    background:#1b1f2a;
+    color:white;
+}

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>EMBO Login</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background: radial-gradient(circle at center, #121212 0%, #0f1115 100%);
+    overflow:hidden;
+}
+
+/* 🔴 Glow Background */
+.circle1{
+    position:absolute;
+    width:320px;
+    height:320px;
+    background:radial-gradient(circle, #ff3b30 0%, #b71c1c 60%, transparent 80%);
+    border-radius:50%;
+    filter:blur(60px);
+    top:-80px;
+    left:-80px;
+    opacity:0.9;
+}
+
+.circle2{
+    position:absolute;
+    width:280px;
+    height:280px;
+    background:radial-gradient(circle, #ff1744 0%, #8e0000 60%, transparent 80%);
+    border-radius:50%;
+    filter:blur(70px);
+    bottom:-80px;
+    right:-80px;
+    opacity:0.85;
+}
+
+/* 🧊 Card */
+.card{
+    width:400px;
+    padding:40px;
+    text-align:center;
+
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.1);
+    backdrop-filter:blur(20px);
+    border-radius:25px;
+    color:white;
+
+    animation:fade 1s ease;
+}
+
+.logo{
+    font-size:70px;
+    margin-bottom:10px;
+}
+
+h2{
+    margin-bottom:20px;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    margin:10px 0;
+    border:none;
+    border-radius:12px;
+    background:rgba(255,255,255,0.08);
+    color:white;
+    outline:none;
+}
+
+input:focus{
+    border:1px solid #ff3b30;
+    box-shadow:0 0 10px rgba(255,59,48,0.4);
+}
+
+/* 🔘 Buttons */
+button{
+    width:100%;
+    padding:14px;
+    margin-top:15px;
+    border:none;
+    border-radius:12px;
+    background:#ff3b30;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+button:hover{
+    transform:translateY(-3px);
+    box-shadow:0 10px 25px rgba(255,59,48,0.4);
+}
+
+.secondary{
+    background:transparent;
+    border:1px solid rgba(255,255,255,0.2);
+}
+
+.secondary:hover{
+    background:rgba(255,255,255,0.08);
+}
+
+/* ✨ Animation */
+@keyframes fade{
+from{
+    opacity:0;
+    transform:translateY(20px);
+}
+to{
+    opacity:1;
+    transform:translateY(0);
+}
+}
+
+.small{
+    margin-top:15px;
+    font-size:13px;
+    color:#aaa;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="circle1"></div>
+<div class="circle2"></div>
+
+<div class="card">
+
+    <div class="logo">🚑</div>
+
+    <h2>EMBO Login</h2>
+
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
+
+    <button onclick="login()">Login</button>
+
+    <button class="secondary"
+    onclick="window.location.href='register.html'">
+        Create Account
+    </button>
+
+    <div class="small">
+        Smart Emergency Ambulance System
+    </div>
+
+</div>
+
+<script>
+
+function login(){
+
+    let email = document.getElementById("email").value;
+    let pass = document.getElementById("password").value;
+
+    if(email === "" || pass === ""){
+        alert("Please fill all fields");
+        return;
+    }
+
+    // 🚑 SIMPLIFIED LOGIN (NO VALIDATION SYSTEM)
+    localStorage.setItem("embo_logged", "true");
+    localStorage.setItem("embo_user", email);
+
+    window.location.href = "home.html";
+}
+
+</script>
+
+</body>
+</html>
